@@ -1,14 +1,13 @@
-from tkinter import Tk, Canvas, PhotoImage, Label, Button
-
+from tkinter import Tk, PhotoImage, Label, Button, Canvas
 # ---------------------------- CONSTANTS ------------------------------- #
 PINK = "#e2979c"
 RED = "#e7305b"
 GREEN = "#9bdeac"
 YELLOW = "#f7f5dd"
 FONT_NAME = "Courier"
-WORK_MIN = 1
-SHORT_BREAK_MIN = 2
-LONG_BREAK_MIN = 20
+WORK_MIN = 9
+SHORT_BREAK_MIN = 7
+LONG_BREAK_MIN = 25
 reps = 0
 timer = None
 
@@ -40,22 +39,19 @@ def start_timer():
 
     if reps % 8 == 0:
         count_down(long_break_sec - 1)
-        print(reps)
         timer_label.config(text="Long Break", fg=GREEN)
 
     elif reps % 2 == 0:
         count_down(short_break_sec - 1)
-        print(reps)
         timer_label.config(text="Short Break", fg="orange")
 
     else:
         count_down(work_sec - 1)
-        print(reps)
         timer_label.config(text="Coding Time!", fg=PINK)
 
 
 # ---------------------------- COUNTDOWN MECHANISM ------------------------------- #
-def count_down(count, *args):
+def count_down(count):
     # Convert seconds to minutes:
     count_min = count // 60
     # The remainder of a min, is the seconds counter:
@@ -64,10 +60,13 @@ def count_down(count, *args):
 
     if count_sec < 10:
         count_sec = f"0{count_sec}"
-    canvas.itemconfig(timer_text, text=f"0{count_min}:{count_sec}")
+    if count_min < 10:
+        count_min = f"0{count_min}"
+
+    canvas.itemconfig(timer_text, text=f"{count_min}:{count_sec}")
     if count > 0:
         global timer
-        timer = window.after(100, count_down, count - 1)
+        timer = window.after(1000, count_down, count - 1)
     else:
         start_timer()
         # Add a check mark after each working session:
@@ -82,12 +81,11 @@ def count_down(count, *args):
 
 # ---------------------------- UI SETUP ------------------------------- #
 
-
+# TODO Setting up the UI:
 window = Tk()
 window.title("Pomodoro")
 window.config(padx=50, pady=50, bg=YELLOW)
 
-# TODO Setting up the UI:
 # Canvas
 canvas = Canvas(width=200, height=240, bg=YELLOW, highlightthickness=0)
 # Adding image:
@@ -122,3 +120,4 @@ reset_btn.config(pady=10)
 reset_btn.grid(column=2, row=2)
 
 window.mainloop()
+
